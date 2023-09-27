@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UserSharedPreference</string>
+    <string name="img">Imagen del usuario</string>
 </resources>
