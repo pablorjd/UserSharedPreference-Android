@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import space.pablorjd.usersharedpreference.databinding.ItemUserAltBinding
-import space.pablorjd.usersharedpreference.databinding.ItemUserBinding
+
 
 class UserAdapter(private val users:List<User>, private val listener: OnClickListener)
     : RecyclerView.Adapter<UserAdapter.ViewHolder>(){
@@ -23,10 +23,10 @@ class UserAdapter(private val users:List<User>, private val listener: OnClickLis
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user = users.get(position)
-
+        val humanPosition = position + 1
         with(holder) {
-            setListener(user, position+1)
-            binding.tvOrder.text = (position + 1).toString()
+            setListener(user, humanPosition)
+            binding.tvOrder.text = (humanPosition).toString()
             binding.tvName.text= user.getFullName()
 
             Glide.with(context)
