@@ -1,13 +1,19 @@
 package space.pablorjd.usersharedpreference
 
+import android.content.Context
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import space.pablorjd.usersharedpreference.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnClickListener{
 
     private lateinit var userAdapter: UserAdapter
     private lateinit var linearLayoutManager: LayoutManager
@@ -17,14 +23,49 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userAdapter = UserAdapter(getUser())
+        userAdapter = UserAdapter(getUser(), this)
 
         linearLayoutManager = LinearLayoutManager(this)
 
+        val preferences = getPreferences(Context.MODE_PRIVATE)
+        val isFirstTime = preferences.getBoolean(getString(R.string.sp_first_time), true)
+        Log.i("SP", "${getString(R.string.sp_first_time)} == ${isFirstTime}")
+        Log.i("SP", "${getString(R.string.username)} === ${preferences.getString(getString(R.string.username), "N/A")}")
+
+        if(isFirstTime) {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_register, null)
+
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_title)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setPositiveButton(R.string.dialog_confirm, DialogInterface.OnClickListener { dialogInterface, i ->
+                    val userName = dialogView.findViewById<TextInputEditText>(R.id.etUserName).text.toString()
+                    with(preferences.edit()) {
+                        putBoolean(getString(R.string.sp_first_time),false)
+                        putString(getString(R.string.username),userName)
+                            .apply()
+                    }
+                    Toast.makeText(this, getString(R.string.register_user), Toast.LENGTH_SHORT).show()
+                    //preferences.edit().putBoolean(getString(R.string.sp_first_time),false).commit()
+                })
+                //.setNegativeButton("Cancelar", null)
+                .show()
+        } else {
+            val userName = preferences.getString(getString(R.string.username), getString(R.string.nombre_de_usuario))
+            Toast.makeText(this, "Bienvenido ${userName}", Toast.LENGTH_SHORT).show()
+        }
+
+
         binding.recyclerView.apply {
+            setHasFixedSize(true)
             layoutManager = linearLayoutManager
             adapter = userAdapter
         }
+    }
+
+    override fun onCLick(user: User, position: Int) {
+        Toast.makeText(this, "${position} , ${user.getFullName()}", Toast.LENGTH_LONG).show()
     }
 
 
