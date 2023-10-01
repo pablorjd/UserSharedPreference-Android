@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), OnClickListener{
         if(isFirstTime) {
             val dialogView = layoutInflater.inflate(R.layout.dialog_register, null)
 
-            MaterialAlertDialogBuilder(this)
+           /* MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_title)
                 .setView(dialogView)
                 .setCancelable(false)
@@ -50,7 +50,32 @@ class MainActivity : AppCompatActivity(), OnClickListener{
                     //preferences.edit().putBoolean(getString(R.string.sp_first_time),false).commit()
                 })
                 //.setNegativeButton("Cancelar", null)
-                .show()
+                .show() */
+            val dialog = MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_title)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setPositiveButton(R.string.dialog_confirm, DialogInterface.OnClickListener { dialogInterface, i ->})
+                .create()
+
+            dialog.show()
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                val userName = dialogView.findViewById<TextInputEditText>(R.id.etUserName).text.toString()
+                if ( userName.isBlank() ) {
+                    Toast.makeText(this, getString(R.string.register_invalid), Toast.LENGTH_SHORT).show()
+                }else {
+                    with(preferences.edit()) {
+                        putBoolean(getString(R.string.sp_first_time),false)
+                        putString(getString(R.string.username),userName)
+                            .apply()
+                    }
+                    Toast.makeText(this, getString(R.string.register_user), Toast.LENGTH_SHORT).show()
+
+                    dialog.dismiss()
+                }
+            }
+
+
         } else {
             val userName = preferences.getString(getString(R.string.username), getString(R.string.nombre_de_usuario))
             Toast.makeText(this, "Bienvenido ${userName}", Toast.LENGTH_SHORT).show()
