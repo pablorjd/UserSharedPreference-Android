@@ -10,7 +10,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import space.pablorjd.usersharedpreference.databinding.ItemUserAltBinding
 
 
-class UserAdapter(private val users:List<User>, private val listener: OnClickListener)
+class UserAdapter(private val users:MutableList<User>, private val listener: OnClickListener)
     : RecyclerView.Adapter<UserAdapter.ViewHolder>(){
     private lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -41,6 +41,12 @@ class UserAdapter(private val users:List<User>, private val listener: OnClickLis
     }
 
     override fun getItemCount(): Int =  users.size
+    fun remove(position: Int) {
+
+        users.removeAt(position)
+        notifyItemRemoved(position)
+
+    }
 
 
     inner class ViewHolder(view:View) :RecyclerView.ViewHolder(view) {
